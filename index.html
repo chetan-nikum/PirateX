@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIRATE X — Stream Everything</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-left">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">☠</span>
+        <span class="logo-text">PIRATE<span class="logo-x">X</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#" class="nav-link active">Home</a></li>
+        <li><a href="#trending" class="nav-link">Trending</a></li>
+        <li><a href="#movies" class="nav-link">Movies</a></li>
+        <li><a href="#series" class="nav-link">Series</a></li>
+        <li><a href="#top-rated" class="nav-link">Top Rated</a></li>
+      </ul>
+    </div>
+    <div class="nav-right">
+      <button class="search-btn" id="searchToggle" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+      <div class="nav-avatar">
+        <span>P</span>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== SEARCH OVERLAY ========== -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-container">
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search movies, TV shows, genres…" autocomplete="off" />
+        <button class="search-close" id="searchClose" aria-label="Close search">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero" id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" id="heroContent">
+      <div class="hero-skeleton">
+        <div class="skel skel-badge"></div>
+        <div class="skel skel-title"></div>
+        <div class="skel skel-meta"></div>
+        <div class="skel skel-desc"></div>
+        <div class="skel skel-btns"></div>
+      </div>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+    <button class="hero-arrow hero-prev" id="heroPrev">&#8249;</button>
+    <button class="hero-arrow hero-next" id="heroNext">&#8250;</button>
+  </section>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main-content">
+
+    <!-- Continue Watching -->
+    <section class="row-section" id="continue-watching">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Continue Watching</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="continue">&#8249;</button>
+        <div class="movies-row" id="continueRow"></div>
+        <button class="row-arrow row-next" data-row="continue">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- Trending Now -->
+    <section class="row-section" id="trending">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Trending Now</h2>
+        <span class="section-badge">LIVE</span>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="trending">&#8249;</button>
+        <div class="movies-row" id="trendingRow"></div>
+        <button class="row-arrow row-next" data-row="trending">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- Popular Movies -->
+    <section class="row-section" id="movies">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Popular Movies</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="popular">&#8249;</button>
+        <div class="movies-row" id="popularRow"></div>
+        <button class="row-arrow row-next" data-row="popular">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- Top Rated -->
+    <section class="row-section" id="top-rated">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Top Rated</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="toprated">&#8249;</button>
+        <div class="movies-row" id="topratedRow"></div>
+        <button class="row-arrow row-next" data-row="toprated">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- TV Series -->
+    <section class="row-section" id="series">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>TV Series</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="series">&#8249;</button>
+        <div class="movies-row" id="seriesRow"></div>
+        <button class="row-arrow row-next" data-row="series">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- Action -->
+    <section class="row-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Action &amp; Adventure</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="action">&#8249;</button>
+        <div class="movies-row" id="actionRow"></div>
+        <button class="row-arrow row-next" data-row="action">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- Sci-Fi -->
+    <section class="row-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Sci-Fi &amp; Fantasy</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="scifi">&#8249;</button>
+        <div class="movies-row" id="scifiRow"></div>
+        <button class="row-arrow row-next" data-row="scifi">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- Horror -->
+    <section class="row-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-bar"></span>Horror &amp; Thriller</h2>
+      </div>
+      <div class="movies-row-wrap">
+        <button class="row-arrow row-prev" data-row="horror">&#8249;</button>
+        <div class="movies-row" id="horrorRow"></div>
+        <button class="row-arrow row-next" data-row="horror">&#8250;</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">☠</span>
+        <span class="logo-text">PIRATE<span class="logo-x">X</span></span>
+      </div>
+      <p class="footer-copy">© 2025 PIRATE X. All rights reserved. For entertainment purposes only.</p>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+        <a href="#">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

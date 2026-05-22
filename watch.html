@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watch — PIRATE X</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="watch-body">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-left">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">☠</span>
+        <span class="logo-text">PIRATE<span class="logo-x">X</span></span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        Back to Home
+      </a>
+      <div class="nav-avatar"><span>P</span></div>
+    </div>
+  </nav>
+
+  <!-- WATCH PAGE -->
+  <div class="watch-page" id="watchPage">
+
+    <!-- Backdrop -->
+    <div class="watch-backdrop" id="watchBackdrop"></div>
+
+    <div class="watch-inner">
+
+      <!-- Player Section -->
+      <div class="player-section">
+        <div class="player-loading" id="playerLoading">
+          <div class="player-spinner"></div>
+          <p>Loading stream…</p>
+        </div>
+        <div class="player-wrap" id="playerWrap">
+          <iframe id="playerFrame" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin" frameborder="0"></iframe>
+        </div>
+
+        <!-- TV show episode controls -->
+        <div class="episode-controls" id="episodeControls" style="display:none">
+          <div class="ep-row">
+            <div class="ep-group">
+              <label>Season</label>
+              <select id="seasonSelect" class="ep-select"></select>
+            </div>
+            <div class="ep-group">
+              <label>Episode</label>
+              <select id="episodeSelect" class="ep-select"></select>
+            </div>
+            <button class="ep-go-btn" id="epGoBtn">Play Episode</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Movie Info -->
+      <div class="watch-info" id="watchInfo">
+        <div class="watch-skeleton" id="watchSkeleton">
+          <div class="skel skel-wtitle"></div>
+          <div class="skel skel-wmeta"></div>
+          <div class="skel skel-wdesc"></div>
+          <div class="skel skel-wdesc" style="width:70%"></div>
+        </div>
+        <div class="watch-details" id="watchDetails" style="display:none">
+          <div class="watch-genre-pills" id="watchGenres"></div>
+          <h1 class="watch-title" id="watchTitle"></h1>
+          <div class="watch-meta" id="watchMeta"></div>
+          <p class="watch-desc" id="watchDesc"></p>
+        </div>
+      </div>
+
+      <!-- Similar Section -->
+      <div class="similar-section">
+        <div class="section-header">
+          <h2 class="section-title"><span class="title-bar"></span>Similar Titles</h2>
+        </div>
+        <div class="movies-row-wrap">
+          <button class="row-arrow row-prev" data-row="similar">&#8249;</button>
+          <div class="movies-row" id="similarRow"></div>
+          <button class="row-arrow row-next" data-row="similar">&#8250;</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="watch.js"></script>
+</body>
+</html>
