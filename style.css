@@ -587,6 +587,18 @@ iframe { display: block; width: 100%; }
   -ms-overflow-style: none;
 }
 .movies-row::-webkit-scrollbar { display: none; }
+.liked-empty {
+  width: 100%;
+  min-height: 112px;
+  display: flex;
+  align-items: center;
+  color: var(--gray-500);
+  font-family: var(--font-cond);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
 
 .row-arrow {
   position: absolute;
@@ -657,6 +669,41 @@ iframe { display: block; width: 100%; }
 .movie-card:hover .movie-card-img {
   transform: scale(1.045);
   filter: brightness(0.78) saturate(1.08);
+}
+.like-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.86);
+  background: rgba(0,0,0,0.56);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.95);
+  backdrop-filter: blur(10px);
+  transition: opacity var(--transition), transform var(--transition), color var(--transition), background var(--transition), border-color var(--transition);
+}
+.movie-card:hover .like-btn,
+.like-btn.liked,
+.like-btn:focus-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.like-btn:hover,
+.like-btn.liked {
+  color: var(--white);
+  background: var(--red);
+  border-color: var(--red);
+}
+.like-btn:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
 }
 .movie-card-overlay {
   position: absolute;
@@ -1088,6 +1135,10 @@ iframe { display: block; width: 100%; }
   .movie-card,
   .continue-card,
   .card-skeleton { width: 250px; }
+  .like-btn {
+    opacity: 1;
+    transform: none;
+  }
   .footer-inner { flex-direction: column; text-align: center; padding: 0 20px; }
   .watch-inner { padding: 20px 20px 40px; }
 }

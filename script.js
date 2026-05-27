@@ -147,6 +147,7 @@ function renderSkeletons(rowId, count = 8) {
 
 const durationCache = new Map();
 const artworkCache = new Map();
+const LIKED_STORAGE_KEY = 'px_liked';
 
 function formatDuration(minutes) {
   const total = Number(minutes);
@@ -166,6 +167,16 @@ function getItemDuration(m) {
 
 function normalizeMediaType(mediaType) {
   return mediaType === 'tv' ? 'tv' : 'movie';
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
 }
 
 function getFallbackArtwork(m) {
@@ -300,12 +311,14 @@ async function hydrateCardDuration(card, id, mediaType) {
 
 function createMovieCard(m, mediaType = 'movie', extra = {}) {
   const title = m.title || m.name || 'Unknown';
+  const safeTitle = escapeHtml(title);
   const year = (m.release_date || m.first_air_date || '').slice(0, 4);
   const rating = m.vote_average ? m.vote_average.toFixed(1) : '';
   const type = mediaType === 'tv' ? 'TV' : 'MOVIE';
   const genres = (m.genre_ids || []).slice(0, 3).map(id => GENRE_MAP[id]).filter(Boolean);
   const duration = mediaType === 'tv' ? '' : getItemDuration(m);
   const fallbackArtwork = getFallbackArtwork(m);
+  const liked = isItemLiked(m.id, mediaType);
 
   const card = document.createElement('div');
   card.className = `movie-card${extra.continue ? ' continue-card' : ''}`;
@@ -318,14 +331,17 @@ function createMovieCard(m, mediaType = 'movie', extra = {}) {
 
   card.innerHTML = `
     <div class="movie-card-img-wrap">
-      <img class="movie-card-img${fallbackArtwork.isPoster ? ' poster-fallback' : ''}" src="${fallbackArtwork.src}" alt="${title}" loading="lazy" />
+      <img class="movie-card-img${fallbackArtwork.isPoster ? ' poster-fallback' : ''}" src="${fallbackArtwork.src}" alt="${safeTitle}" loading="lazy" />
       ${progressHtml}
+      <button class="like-btn${liked ? ' liked' : ''}" type="button" aria-label="${liked ? 'Remove from liked' : 'Add to liked'}" title="${liked ? 'Remove from liked' : 'Add to liked'}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </button>
       <div class="movie-card-overlay">
         <div class="card-play-btn" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="6,4 20,12 6,20"/></svg>
         </div>
         <div class="card-hover-content">
-          <div class="card-overlay-title">${title}</div>
+          <div class="card-overlay-title">${safeTitle}</div>
           <div class="card-overlay-meta">
             ${rating ? `<span>IMDb ${rating}</span>` : ''}
             <span class="card-duration"${duration ? '' : ' hidden'}>${duration}</span>
@@ -337,7 +353,7 @@ function createMovieCard(m, mediaType = 'movie', extra = {}) {
       </div>
     </div>
     <div class="movie-card-info">
-      <div class="movie-card-title">${title}</div>
+      <div class="movie-card-title">${safeTitle}</div>
       <div class="movie-card-meta">
         ${rating ? `<span class="card-rating">★ ${rating}</span>` : ''}
         ${year ? `<span class="card-year">${year}</span>` : ''}
@@ -348,6 +364,10 @@ function createMovieCard(m, mediaType = 'movie', extra = {}) {
 
   hydrateCardDuration(card, m.id, mediaType);
   hydrateTitleArtwork(card, m, mediaType);
+  card.querySelector('.like-btn')?.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleLikedItem(m, mediaType, e.currentTarget);
+  });
   card.addEventListener('click', () => goWatch(m.id, mediaType, m));
   return card;
 }
@@ -379,6 +399,66 @@ function getSavedContinueItems() {
   } catch (e) {
     return [];
   }
+}
+
+function getLikedItems() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LIKED_STORAGE_KEY) || '[]');
+    return Array.isArray(saved) ? saved : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function setLikedItems(items) {
+  localStorage.setItem(LIKED_STORAGE_KEY, JSON.stringify(items));
+}
+
+function isItemLiked(id, mediaType) {
+  return getLikedItems().some(item => String(item.id) === String(id) && item.mediaType === mediaType);
+}
+
+function syncLikeButtons(id, mediaType, liked) {
+  document.querySelectorAll(`.movie-card[data-id="${id}"][data-type="${mediaType}"] .like-btn`).forEach(btn => {
+    btn.classList.toggle('liked', liked);
+    btn.setAttribute('aria-label', liked ? 'Remove from liked' : 'Add to liked');
+    btn.setAttribute('title', liked ? 'Remove from liked' : 'Add to liked');
+  });
+}
+
+function renderLikedItems() {
+  const section = document.getElementById('liked');
+  const row = document.getElementById('likedRow');
+  const count = document.getElementById('likedCount');
+  if (!section || !row) return;
+
+  const liked = getLikedItems();
+  row.innerHTML = '';
+  if (count) count.textContent = `${liked.length} SAVED`;
+
+  if (!liked.length) {
+    row.innerHTML = '<div class="liked-empty">No liked titles yet.</div>';
+    return;
+  }
+
+  liked.forEach(item => {
+    row.appendChild(createMovieCard(item, item.mediaType));
+  });
+}
+
+function toggleLikedItem(item, mediaType, button = null) {
+  if (!item?.id) return;
+
+  const liked = getLikedItems();
+  const alreadyLiked = liked.some(savedItem => String(savedItem.id) === String(item.id) && savedItem.mediaType === mediaType);
+  const nextItems = alreadyLiked
+    ? liked.filter(savedItem => !(String(savedItem.id) === String(item.id) && savedItem.mediaType === mediaType))
+    : [{ ...item, mediaType, savedAt: Date.now() }, ...liked].slice(0, 40);
+
+  setLikedItems(nextItems);
+  syncLikeButtons(item.id, mediaType, !alreadyLiked);
+  if (button) button.blur();
+  renderLikedItems();
 }
 
 function saveContinueWatchingItem(item, mediaType) {
@@ -535,6 +615,7 @@ function initFadeObserver() {
 // ============ INIT ============
 async function init() {
   loadContinueWatching();
+  renderLikedItems();
   fetchHero();
 
   await Promise.all([
